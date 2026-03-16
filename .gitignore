@@ -1,0 +1,8 @@
+# Fichiers de configuration sensibles
+.env
+
+# Node modules (si Node.js)
+node_modules/
+
+# Logs
+*.log
