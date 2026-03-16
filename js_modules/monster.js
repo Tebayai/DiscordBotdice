@@ -1,4 +1,31 @@
+/* function roulerDe(){
+    const res = Math.floor(Math.random() * 20) + 1;
+    return res;
+}
 
+  //recupere le resultat du de roulerDe et inflige des degats en fonction du resultat
+function calculerDegats(resultat){
+    let degats = 0;
+    if (resultat === 20){
+        degats = 0;
+    }
+    else if (resultat >= 15){
+        degats = 3;
+    }
+    else if (resultat >= 10){
+        degats = 7;
+    }
+    else if (resultat >= 5){
+        degats = 10;
+    }
+    else if (resultat >= 2){
+        degats = 15;
+    }
+    else{
+        degats = 20;
+    }
+    return degats;
+} */
 
   //creation gestion de combat avec barre de vie 
   //creer une structure pour gere les information du personnage
