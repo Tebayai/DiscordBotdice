@@ -3,6 +3,7 @@ require('dotenv').config();
 const {Client,GatewayIntentBits} = require('discord.js');
 const config = require('./config.js');
 const Dice = require('./js_modules/dice.js');
+const Fight = require('./js_modules/monster.js');
 
 const client = new Client({
     intents: [
@@ -36,6 +37,7 @@ client.login(config.token);
 client.on("messageCreate", msg => {
     if(msg.author.bot) return;
 
+    //détecte les commandes de dés
     if(msg.content === "/d20" || msg.content === "/D20" || msg.content === "/déà"){
         Dice.rollDice20(msg);
     }
@@ -54,7 +56,26 @@ client.on("messageCreate", msg => {
     else if(msg.content === "/10d20" || msg.content === "/10D20"){
         Dice.rollDice10d20(msg)
     }
+    else if(msg.content === "/3d20" || msg.content === "/3D20"){
+        Dice.rollDice3d20(msg)
+    }
     else if(msg.content === "/5d5" || msg.content === "/5D5"){
         Dice.rollDice5d5(msg)
+    }
+    else if(msg.content === "/dpipee" || msg.content === "/DPIPEE"){
+        Dice.roulerDePipee(msg)
+    }
+
+    //détecte les commandes de combat
+    // /fight goblin,40 loup,20
+    else if(msg.content.startsWith("/fight")) {
+        const args = msg.content.slice(7); // retire "/fight "
+        Fight.startFight(msg.channel, args);
+    }
+
+    // /dfight goblin
+    else if(msg.content.startsWith("/dfight")) {
+        const targetName = msg.content.slice(8).trim(); // retire "/dfight "
+        Fight.dfight(msg.channel, targetName);
     }
 });

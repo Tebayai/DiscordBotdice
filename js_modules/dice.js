@@ -11,7 +11,21 @@ function rollDice100(msg){
 
 function rollDice5(msg){
     const dice5 = Math.floor(Math.random() * 5) + 1;
-    msg.reply(`Vous avez fait un ${dice5}`);
+    if(dice5 === 5) {
+        msg.reply(`La chance est avec toi lorsque le dé s'immobilise sur le chiffre 5. Un succès inattendu éclaire ton chemin.`);
+    }
+    else if(dice5 === 4) {
+            msg.reply(`Un soupçon d'espoir brille alors que le dé s'arrête sur le chiffre 4. Une légère chance t'accompagne.`);
+    }
+    else if(dice5 === 3) {
+        msg.reply(`La magie du hasard décide que tu obtiens le chiffre 3. Un résultat moyen, sans plus ni moins.`);
+    }
+    else if(dice5 === 2) {
+        msg.reply(`Un frisson parcourt l'air alors que le dé atterrit sur le chiffre 2. La fortune te tourne le dos.`);
+    }
+    else if(dice5 === 1) {
+        msg.reply(`Le destin est impitoyable et te réserve le chiffre 1. La chance ne te sourit pas cette fois-ci.`);
+    }
 }
 
 function rollDice3(msg){
@@ -44,6 +58,13 @@ function rollDice10d20(msg){
     msg.reply(`10 dés 20: ${dice1} ${dice2} ${dice3} ${dice4} ${dice5} ${dice6} ${dice7} ${dice8} ${dice9} ${dice10}`)
 }
 
+function rollDice3d20(msg){
+    const dice1 = Math.floor(Math.random() * 20) + 1;
+    const dice2 = Math.floor(Math.random() * 20) + 1;
+    const dice3 = Math.floor(Math.random() * 20) + 1;
+    msg.reply(`3 dés 20: ${dice1} ${dice2} ${dice3}`)
+}
+
 function rollDice5d5(msg){
     const dice1 = Math.floor(Math.random() * 5) + 1;
     const dice2 = Math.floor(Math.random() * 5) + 1;
@@ -52,51 +73,6 @@ function rollDice5d5(msg){
     const dice5 = Math.floor(Math.random() * 5) + 1;
     msg.reply(`5 dés 5: ${dice1} ${dice2} ${dice3} ${dice4} ${dice5}`)
 }
-
-
-//exportation des fonctions pour les utiliser dans discord.js
-module.exports = {
-    rollDice20,
-    rollDice100,
-    rollDice5,
-    rollDice3,
-    rollDice5d100,
-    rollDice10d20,
-    rollDice5d5
-};
-
-/*
-
-    if(msg.content === "/d5") {
-    if(dice5 === 5) {
-        msg.reply(`La chance est avec toi lorsque le dé s'immobilise sur le chiffre 5. Un succès inattendu éclaire ton chemin.`);
-        }
-    if(dice5 === 4) {
-            msg.reply(`Un soupçon d'espoir brille alors que le dé s'arrête sur le chiffre 4. Une légère chance t'accompagne.`);
-        }
-    if(dice5 === 3) {
-        msg.reply(`La magie du hasard décide que tu obtiens le chiffre 3. Un résultat moyen, sans plus ni moins.`);
-    }
-    if(dice5 === 2) {
-        msg.reply(`Un frisson parcourt l'air alors que le dé atterrit sur le chiffre 2. La fortune te tourne le dos.`);
-    }
-    if(dice5 === 1) {
-        msg.reply(`Le destin est impitoyable et te réserve le chiffre 1. La chance ne te sourit pas cette fois-ci.`);
-    }
-
-    }
-
-    if(msg.content === "/startrp"){
-        msg.reply(`Bienvenue dans l'aventure ! Que le destin guide tes pas et que la chance soit avec toi. Prépare-toi à vivre des moments épiques et à relever des défis passionnants. Que les dés roulent en ta faveur !`);
-    }
-    //lance 3 dés de 20
-    if(msg.content === "/3d20") {
-        const dice100_1 = Math.floor(Math.random() * 20) + 1;
-        const dice100_2 = Math.floor(Math.random() * 20) + 1;
-        const dice100_3 = Math.floor(Math.random() * 20) + 1;
-        msg.reply(`Vous avez fait un ${dice100_1}, ${dice100_2}, ${dice100_3}`);
-    }
-});
 
 function roulerDePipee(){
     const resultat = Math.floor(Math.random() * 20) + 1;
@@ -113,4 +89,17 @@ function roulerDePipee(){
         return autrenombre[index];
     }
 }
-     */
+
+
+//exportation des fonctions pour les utiliser dans discord.js
+module.exports = {
+    rollDice20,
+    rollDice100,
+    rollDice5,
+    rollDice3,
+    rollDice5d100,
+    rollDice10d20,
+    rollDice3d20,
+    rollDice5d5,
+    roulerDePipee
+};

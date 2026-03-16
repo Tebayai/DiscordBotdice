@@ -1,143 +1,76 @@
-/* function roulerDe(){
-    const res = Math.floor(Math.random() * 20) + 1;
-    return res;
-}
+// js_modules/fight.js
+const fights = new Map(); // combats actifs par channel
 
-  //recupere le resultat du de roulerDe et inflige des degats en fonction du resultat
-function calculerDegats(resultat){
-    let degats = 0;
-    if (resultat === 20){
-        degats = 0;
-    }
-    else if (resultat >= 15){
-        degats = 3;
-    }
-    else if (resultat >= 10){
-        degats = 7;
-    }
-    else if (resultat >= 5){
-        degats = 10;
-    }
-    else if (resultat >= 2){
-        degats = 15;
-    }
-    else{
-        degats = 20;
-    }
-    return degats;
-} */
-
-  //creation gestion de combat avec barre de vie 
-  //creer une structure pour gere les information du personnage
-
-/* class Personnage{
-    constructor(nom, hp){
-        this.nom = nom;
+// Classe pour un ennemi
+class Enemy {
+    constructor(name, hp) {
+        this.name = name;
+        this.maxHp = hp;
         this.hp = hp;
     }
-    perdreHp(quantite){
-        this.hp -= quantite;
+
+    takeDamage(amount) {
+        this.hp -= amount;
+        if (this.hp < 0) this.hp = 0;
     }
-    getHp(){
-        return this.hp;
+
+    isDead() {
+        return this.hp <= 0;
     }
-    
+
+    getHpBar(length = 20) {
+        const filled = Math.round((this.hp / this.maxHp) * length);
+        const empty = length - filled;
+        const bar = '█'.repeat(filled) + '░'.repeat(empty);
+        return `${this.name}: ${bar} ${this.hp}/${this.maxHp}HP`;
+    }
 }
 
-function afficherHp(personnage){
-    const hpactuel = personnage.getHp();
-    //affiche hpmax en fonction du personnage
-    let hpmax = 0;
-    if (personnage.nom === "goblin"){
-        hpmax = 20;
-    }
-    else if (personnage.nom === "gardien"){
-        hpmax = 200;
-    }
-    else if (personnage.nom === "fenrir"){
-        hpmax = 200;
-    }
-    else if (personnage.nom === "elfe noire"){
-        hpmax = 150;
-    }
+// Crée un combat dans un channel
+function startFight(channel, enemiesString) {
+    // Exemple : "goblin,40 loup,20"
+    const enemiesArray = enemiesString.split(' ');
+    const enemies = enemiesArray.map(e => {
+        const [name, hpStr] = e.split(',');
+        return new Enemy(name, parseInt(hpStr));
+    });
 
-    const barreRemplie = '█';
-    const barreVide = '░';
-    const barrelongeur = 20;
+    fights.set(channel.id, enemies);
 
-    const hppourcent = hpactuel / hpmax;    
-    let nombreBarreRemplie = Math.floor(hppourcent * barrelongeur);
-
-    nombreBarreRemplie = Math.min(Math.max(nombreBarreRemplie, 0), barrelongeur);
-    const barrHp = barreRemplie.repeat(nombreBarreRemplie) + barreVide.repeat(20 - nombreBarreRemplie);
-    return `${personnage.nom} ${barrHp} ${hpactuel}/${hpmax}`;
+    let message = "**Combat lancé !**\n";
+    enemies.forEach(e => message += e.getHpBar() + '\n');
+    channel.send(message);
 }
 
-    const goblin = new Personnage("goblin", 20);
-    const gardien = new Personnage("gardien", 200);
-    const fenrir = new Personnage("fenrir", 200);
-    const elfenoire = new Personnage("elfe noire", 150);
+// Attaque un ennemi avec un dé 20
+function dfight(channel, targetName) {
+    if (!fights.has(channel.id)) {
+        return channel.send("Aucun combat en cours dans ce channel !");
+    }
 
-    //lancer le combat
+    const enemies = fights.get(channel.id);
+    const target = enemies.find(e => e.name.toLowerCase() === targetName.toLowerCase());
+    if (!target) return channel.send(`Aucun ennemi nommé "${targetName}" trouvé !`);
 
-    client.on("messageCreate", msg => {
-        if (msg.content === "/combat"){
-            msg.reply(`Vous avez le choix entre 3 monstres : ${goblin.nom}, ${gardien.nom}, ${fenrir.nom}`);
-        }
-        else if (msg.content === "/goblin"){
-            const result = roulerDe();
-            //calcule les degats en fonction du resultat du dés
-            const degats = calculerDegats(result);
-            //affiche les degats
-            goblin.perdreHp(degats);
-            msg.reply(`Vous avez fait un ${result} et infligez ${degats} points de degats\n${afficherHp(goblin)}`);
-            //si le goblin est mort
-            if (goblin.getHp() <= 0){
-                msg.reply(`Vous avez vaincu ${goblin.nom} !`);
-                goblin.hp = 20;
-            }
-        }
-        else if (msg.content === "/gardien"){
-            const result = roulerDe();
-            //calcule les degats en fonction du resultat du dés
-            const degats = calculerDegats(result);
-            //affiche les degats
-            gardien.perdreHp(degats);
-            msg.reply(`Vous avez fait un ${result} et infligez ${degats} points de degats\n${afficherHp(gardien)}`);
-            if (gardien.getHp() <= 0){
-                msg.reply(`Vous avez vaincu ${gardien.nom} !`);
-                gardien.hp = 200;
-            }
-        }
-        else if (msg.content === "/fenrir"){
-            const result = roulerDe();
-            //calcule les degats en fonction du resultat du dés
-            const degats = calculerDegats(result);
-            //affiche les degats
-            fenrir.perdreHp(degats);
-            msg.reply(`Vous avez fait un ${result} et infligez ${degats} points de degats\n${afficherHp(fenrir)}`);
-            if (fenrir.getHp() <= 0){
-                msg.reply(`Vous avez vaincu ${fenrir.nom} !`);
-                fenrir.hp = 200;
-            }
-        }
-        else if (msg.content === "/elfenoire"){
-            const result = roulerDe();
-            //calcule les degats en fonction du resultat du dés
-            const degats = calculerDegats(result);
-            //affiche les degats
-            elfenoire.perdreHp(degats);
-            msg.reply(`Vous avez fait un ${result} et infligez ${degats} points de degats\n${afficherHp(elfenoire)}`);
-            if (elfenoire.getHp() <= 0){
-                msg.reply(`Vous avez vaincu ${elfenoire.nom} !`);
-                elfenoire.hp = 150;
-            }
-        }
-        else if (msg.content === "/resetfight"){
-            goblin.hp = 20;
-            gardien.hp = 200;
-            fenrir.hp = 200;
-            elfenoire.hp = 150;
-            msg.reply(` ${afficherHp(goblin)}\n${afficherHp(gardien)}\n${afficherHp(fenrir)}\n${afficherHp(elfenoire)}`);
-        }
-    }); */
+    const dice = Math.floor(Math.random() * 20) + 1;
+    let damage = dice === 20 ? 20 : dice === 1 ? 1 : dice;
+
+    target.takeDamage(damage);
+
+    // Message résultat attaque
+    let msg = `${target.name} a reçu ${damage} dégâts !\n`;
+
+    enemies.forEach(e => {
+        msg += e.isDead() ? `${e.name}: mort\n` : e.getHpBar() + '\n';
+    });
+
+    channel.send(msg);
+
+    // Vérifier si tous morts
+    if (enemies.every(e => e.isDead())) {
+        channel.send("🎉 Félicitations ! Tous les ennemis sont morts !");
+        fights.delete(channel.id);
+    }
+}
+
+module.exports = { startFight, dfight };
